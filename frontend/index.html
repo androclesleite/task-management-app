@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TecsaGroup - Gerenciador de Tarefas </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <body>
+        <div class="container py-5">
+            <h1 class="text-center mb-4 display-6 fw-semibold text-color-title">
+                <i class="fas fa-clipboard-list me-2"></i>TecsaGroup - Gerenciador de Tarefas
+            </h1>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header py-3">
+                            <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Nova Tarefa</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="taskForm" class="needs-validation" novalidate>
+                                <input type="hidden" id="taskId">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Título <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="title" required>
+                                    <div class="invalid-feedback">Por favor, insira um título.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Descrição <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="description" rows="3" required></textarea>
+                                    <div class="invalid-feedback">Por favor, insira uma descrição.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="status" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="pending">Pendente</option>
+                                        <option value="in_progress">Em Andamento</option>
+                                        <option value="completed">Concluído</option>
+                                    </select>
+                                    <div class="invalid-feedback">Por favor, selecione um status.</div>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Salvar Tarefa
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header py-3">
+                            <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Lista de Tarefas</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Título</th>
+                                            <th>Descrição</th>
+                                            <th>Status</th>
+                                            <th class="text-center">Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="taskList">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script type="module" src="js/api.js"></script>
+        <script type="module" src="js/task-list.js"></script>
+        <script type="module" src="js/task-form.js"></script>
+        <script>
+            window.Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        </script>
+    </body>
+
+</html>

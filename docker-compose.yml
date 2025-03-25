@@ -1,0 +1,39 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  web:
+    build: ./backend
+    ports:
+      - "9000:80"
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=taskapp
+      - DB_PASS=taskapp123
+      - DB_NAME=taskmanager
+
+  db:
+    image: mysql:8.0
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=taskmanager
+      - MYSQL_USER=taskapp
+      - MYSQL_PASSWORD=taskapp123
+    ports:
+      - "3306:3306"
+
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    ports:
+      - "8080:80"
+
+volumes:
+  mysql-data:

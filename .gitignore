@@ -1,0 +1,30 @@
+# Diretórios e arquivos do Composer
+/backend/vendor/
+/backend/composer.lock
+
+# Arquivos de cache e logs
+*.log
+/cache/
+/tmp/
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
+
+# Configurações de IDEs e editores
+/.idea/
+/.vscode/
+/*.sublime-project
+/*.sublime-workspace
+
+# Arquivos de ambiente (caso crie algum .env)
+.env
+
+# Docker
+docker-compose.override.yml
+
+# Arquivos temporários do Nginx/Apache (se aplicável)
+**/nginx/*.conf~
+
+# Outros arquivos desnecessários
+node_modules/
