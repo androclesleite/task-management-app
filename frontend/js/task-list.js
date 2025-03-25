@@ -6,6 +6,12 @@ class TaskList {
         const taskList = document.getElementById('taskList');
         taskList.innerHTML = '';
 
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
         try {
             const tasks = await TaskAPI.getTasks();
 
@@ -39,11 +45,14 @@ class TaskList {
 
                 taskList.appendChild(row);
             });
-
         } catch (error) {
             console.error('Erro ao renderizar tarefas:', error);
             taskList.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Erro ao carregar tarefas.</td></tr>';
-            Toast.fire({ icon: 'error', title: 'Erro ao carregar tarefas.' });
+            Toast.fire({ icon: 'error', title: error.message });
+            if (error.message.includes('Acesso não autorizado') || error.message.includes('Token inválido') || error.message.includes('Acesso negado')) {
+                localStorage.removeItem('jwt_token');
+                window.location.href = 'login.html';
+            }
         }
     }
 
@@ -87,6 +96,10 @@ class TaskList {
                 await this.renderTasks();
             } catch (error) {
                 this.showToast('error', error.message);
+                if (error.message.includes('Acesso não autorizado') || error.message.includes('Token inválido') || error.message.includes('Acesso negado')) {
+                    localStorage.removeItem('jwt_token');
+                    window.location.href = 'login.html';
+                }
             }
         }
     }
@@ -127,21 +140,24 @@ class TaskList {
         document.getElementById('title').focus();
     }
 
-    // TESTE BASICO
-    // static async deleteTask(id) {
-    //     if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
-    //         try {
-    //             await TaskAPI.deleteTask(id);
-    //             await this.renderTasks();
-    //             Toast.fire({ icon: 'success', title: 'Tarefa excluída com sucesso!' });
-    //         } catch (error) {
-    //             Toast.fire({ icon: 'error', title: error.message });
-    //         }
-    //     }
-    // }
+    static logout() {
+        localStorage.removeItem('jwt_token');
+        window.location.href = 'login.html';
+    }
 
     static init() {
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+            window.location.href = 'login.html';
+            return;
+        }
+
         this.renderTasks();
+
+        const logoutButton = document.getElementById('logoutButton');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', () => this.logout());
+        }
     }
 }
 

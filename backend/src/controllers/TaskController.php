@@ -1,6 +1,7 @@
 <?php
 namespace Controllers;
 
+use Controllers\AuthController;
 use Models\Task;
 use Config\Database;
 
@@ -8,19 +9,44 @@ class TaskController
 {
     private $task;
     private $conn;
+    private $user;
 
     public function __construct()
     {
+        $auth = new AuthController(); 
+        $this->user = $auth->getAuthenticatedUser();
+
         $database = new Database();
         $this->conn = $database->getConnection();
         if ($this->conn === null) {
             throw new \Exception("Falha ao conectar ao banco de dados.");
         }
         $this->task = new Task($this->conn);
+
+        if (!$this->user) {
+            http_response_code(401);
+            echo json_encode(["message" => "Acesso não autorizado"]);
+            exit;
+        }
     }
 
     public function createTask()
     {
+        $auth = new AuthController();
+        $user = $auth->getAuthenticatedUser(); 
+
+        if (!$user) {
+            http_response_code(401);
+            echo json_encode(["message" => "Acesso não autorizado"]);
+            return;
+        }
+
+        if ($user['role'] !== 'admin') { 
+            http_response_code(403);
+            echo json_encode(["message" => "Permissão negada"]);
+            return;
+        }
+
         $data = json_decode(file_get_contents("php://input"), true);
 
         $requiredFields = ['title', 'description', 'status'];

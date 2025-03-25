@@ -1,14 +1,4 @@
 -- database/init.sql
--- Tabela de Tarefas
-CREATE TABLE IF NOT EXISTS tasks (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
 -- Tabela de Usuários
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -20,7 +10,19 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Inserção do usuário administrador (se ainda não existir)
+-- Tabela de Tarefas
+CREATE TABLE IF NOT EXISTS tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    user_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- Inserção do usuário administrador 
 INSERT INTO users (name, email, password, role)
-SELECT 'Admin', 'admin@tecsa.com', '$2y$10$yHv9Ht74u0EPmZkCmjeBz8M53B7bQ/NU0zn9y1uJqb77kVtBcUm5y', 'admin'
+SELECT 'Admin', 'admin@tecsa.com', '$2y$10$AseHAdyV3sLZT4kXkw3BeUVlgptcFV6yRlF63f7knu2Iq5eA3SsmO', 'admin'
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@tecsa.com');

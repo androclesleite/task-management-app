@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
+use Controllers\AuthController;
 use Controllers\TaskController;
 
 $request_method = $_SERVER["REQUEST_METHOD"];
@@ -7,8 +8,14 @@ $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $request_uri = trim($request_uri, '/');
 
+if ($request_method === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 try {
     $taskController = new TaskController();
+    $authController = new AuthController();
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(["message" => "Erro ao inicializar o controlador: " . $e->getMessage()]);
@@ -17,7 +24,10 @@ try {
 
 switch ($request_method) {
     case 'POST':
-        if ($request_uri === 'tasks') {
+        if ($request_uri === 'login') {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $authController->login($data);
+        } elseif ($request_uri === 'tasks') {
             $taskController->createTask();
         } else {
             http_response_code(404);

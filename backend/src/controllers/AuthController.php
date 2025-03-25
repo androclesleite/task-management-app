@@ -1,6 +1,9 @@
 <?php
+namespace Controllers;
+
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use User;
 
 class AuthController
 {
@@ -20,13 +23,13 @@ class AuthController
         $userModel = new User();
         $user = $userModel->findByEmail($email);
 
+        var_dump($user); 
         if (!$user || !password_verify($password, $user['password'])) {
             http_response_code(401);
             echo json_encode(['message' => 'Credenciais inválidas']);
             return;
         }
 
-       
         $payload = [
             'iss' => 'task_management_app',
             'sub' => $user['id'],
@@ -41,7 +44,6 @@ class AuthController
         echo json_encode(['token' => $jwt]);
     }
 
-
     public function validateToken($token)
     {
         try {
@@ -50,5 +52,24 @@ class AuthController
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    public function getAuthenticatedUser()
+    {
+        $headers = getallheaders();
+        if (!isset($headers['Authorization'])) {
+            return false;
+        }
+
+        $token = str_replace("Bearer ", "", $headers['Authorization']);
+        $decoded = $this->validateToken($token);
+
+        if (!$decoded) {
+            return false;
+        }
+
+
+        $userModel = new User();
+        return $userModel->findById($decoded->id);
     }
 }

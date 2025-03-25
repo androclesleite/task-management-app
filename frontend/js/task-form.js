@@ -88,6 +88,10 @@ class TaskForm {
             if (error.message.includes('title')) {
                 document.getElementById('title').classList.add('is-invalid');
             }
+            if (error.message.includes('Acesso não autorizado') || error.message.includes('Token inválido') || error.message.includes('Acesso negado')) {
+                localStorage.removeItem('jwt_token');
+                window.location.href = 'login.html';
+            }
         }
     }
 
